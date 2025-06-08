@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct node
+{
+    int data;
+    struct node* left;
+    struct node* right;
+
+    node(int val)
+    {
+        data = val;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+vector<int> Optimal(node* root)
+{
+    vector<int> ans;
+    if(!root) return ans;
+
+    map<int, int> mpp; // {line, elements}} 
+    queue<pair<node*, int>> q;  // {*element, line} 
+
+    q.push({root, 0});
+    while(!q.empty())
+    {
+        auto p = q.front();
+        q.pop();
+        node* currNode = p.first;
+        int line = p.second; 
+        mpp[line] = currNode->data;
+        if(currNode->left != NULL) q.push({currNode->left, line-1});
+        if(currNode->right != NULL) q.push({currNode->right, line+1});
+    }
+    for(auto it : mpp)
+    {
+        ans.push_back(it.second);        
+    }
+    return ans;
+
+    // Logic : Line Concept
+}
+
+int main()
+{
+    node* root = new node(1);
+    root->left = new node(2);
+    root->left->left = new node(21);
+    root->left->right = new node(12);
+    root->right = new node(3);
+    root->right->left = new node(4);
+    root->right->right = new node(7);
+    root->right->left->left = new node(5);
+    root->right->right->right = new node(8);
+    root->right->left->left->left = new node(6);
+    root->right->right->right->right = new node(9);
+
+    vector<int> ans = Optimal(root);
+
+    for(auto it : ans)
+    {
+        cout << it << " ";
+    }
+}

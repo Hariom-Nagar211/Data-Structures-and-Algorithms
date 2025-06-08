@@ -1,0 +1,22 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+void dfs(int node, vector<int> adj[], vector<int> &ans, int vis[])
+{
+    vis[node] = 1;
+    ans.push_back(node);
+    for(auto it : adj(node)) 
+        if(!vis[it]) dfs(it, adj, ans, vis);
+}
+
+vector<int> dfsTraversal(int v, vector<int> adj[])
+{
+    vector<int> ans;
+    int vis[v] = {0};
+    dfs(0, adj, ans, vis);
+    return ans;
+
+    // SC : 3n
+    // TC : n + 2*E
+
+}

@@ -1,0 +1,1 @@
+root->right->right->right->right = new node(9);

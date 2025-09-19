@@ -2,104 +2,118 @@
 using namespace std;
 
 // QUE : Shortest Common Supersequence
+// Link : https://leetcode.com/problems/shortest-common-supersequence/
 
-int f3(string str1, string str2)
-{
-    int n1 = str1.size();
-    int n2 = str2.size();
-    vector<vector<int>> dp(n1+1, vector<int>(n2+1, 0));
-
-    for(int i=0; i<=n1; i++) dp[i][0] = 0;
-    for(int j=0; j<=n2; j++) dp[0][j] = 0;
-
-    for(int i=1; i<=n1; i++)
+class Solution {
+private:
+    string f(string s1, string s2, int n, int m)
     {
-        for(int j=1; j<=n2; j++)
-        {
-            if(str1[i-1] == str2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
+        vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
 
-            else dp[i][j] = 0 + max(dp[i-1][j], dp[i][j-1]);
+        if(s1[0] == s2[0]) dp[1][1] = 1;
+        for(int j=2; j<=m; j++) 
+        {
+            if(s1[0] == s2[j-1]) dp[1][j] = 1;
+            else dp[1][j] = dp[1][j-1];
         }
+        for(int i=2; i<=n; i++)
+        {
+            if(s1[i-1] == s2[0]) dp[i][1] = 1;
+            else dp[i][1] = dp[i-1][1];
+        }
+
+        for(int i=2; i<=n; i++)
+        {
+            for(int j=2; j<=m; j++)
+            {
+                if(s1[i-1] == s2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
+                else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+
+        string lcs = "";
+        int i = n;
+        int j = m;
+        while(i > 0 && j > 0)
+        {
+            if(s1[i-1] == s2[j-1]) 
+            {
+                lcs = s1[i-1] + lcs;
+                i--;
+                j--;
+            }
+            else if(dp[i-1][j] > dp[i][j-1]) i--;
+            else j--;
+        }
+
+        return lcs;
     }
 
-    return dp[n1][n2];
+public:
+    string shortestCommonSupersequence(string str1, string str2) {
 
-    // TC : n1*n2
-    // SC : O(n1*n2)
-}
+        int n = str1.size();
+        int m = str2.size();
 
-string f4(string s1, string s2)
-{
-    int n1 = s1.size();
-    int n2 = s2.size();
-    vector<vector<int>> dp(n1+1, vector<int>(n2+1, 0));
+        string lcs = f(str1, str2, n, m);
+        int l = lcs.size();
 
-    for(int i=0; i<=n1; i++) dp[i][0] = 0;
-    for(int j=0; j<=n2; j++) dp[0][j] = 0;
-
-    for(int i=1; i<=n1; i++)
-    {
-        for(int j=1; j<=n2; j++)
+        string s = "";
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        while(i < n && j < m)
         {
-            if(s1[i-1] == s2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
+            if(k < l && str1[i] == str2[j] && str1[i] == lcs[k])
+            {
+                s += str1[i];
+                i++;
+                j++;
+                k++;
+            }
+            else if(k < l && str1[i] == lcs[k])
+            {
+                while(str2[j] != lcs[k])
+                {
+                    s += str2[j];
+                    j++;
+                }
+                s += lcs[k];
+                i++;
+                j++;
+                k++;
+            }
+            else if(k < l && str2[j] == lcs[k])
+            {
+                while(str1[i] != lcs[k]) 
+                {
+                    s += str1[i];
+                    i++;
+                }
+                s += lcs[k];
+                j++;
+                i++;
+                k++;
+            }
+            else
+            {
+                s += str1[i];
+                s += str2[j];
+                i++;
+                j++;
+            }
 
-            else dp[i][j] = 0 + max(dp[i-1][j], dp[i][j-1]);
         }
+        while(i < n)
+        {
+            s += str1[i];
+            i++;
+        }
+        while(j < m)
+        {
+            s += str2[j];
+            j++;
+        }
+        return s;       
     }
-
-    int i = n1;
-    int j = n2;
-    string s = "";
-    while(i > 0 && j > 0)
-    {
-        if(s1[i-1] == s2[j-1])
-        {
-            s += s1[i-1];
-            i--;
-            j--;
-        }
-        else if(dp[i-1][j] >= dp[i][j-1])
-        {
-            s += s1[i-1];
-            i--;
-        }
-        else
-        {
-            s += s2[j-1];
-            j--;
-        }
-    }
-
-    while(i > 0)
-    {
-        s += s1[i-1];
-        i--;
-    } 
-    while(j > 0)
-    {
-        s += s2[j-1];
-        j--;
-    } 
-
-    reverse(s.begin(), s.end());
-
-    return s;
-}
-
-
-int main()
-{
-    string s1 = "brute";
-    string s2 = "groot";  
-    int n = s1.size();
-    int m = s2.size();
-
-    // Length
-    int LCS = f3(s1, s2);
-    cout << "length : " << (n+m-LCS) << endl;
-
-    // Printing the string
-    string LCS_ = f4(s1, s2);
-    cout << "string : " << LCS_;
-
-}
+};

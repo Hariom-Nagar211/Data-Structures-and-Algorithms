@@ -2,42 +2,46 @@
 using namespace std;
 
 // QUE : Minimum Insertions/Deletions to Convert String A to String B
+// Link : https://www.geeksforgeeks.org/problems/minimum-number-of-deletions-and-insertions0209/1
 
-int f3(string str1, string str2)
-{
-    int n1 = str1.size();
-    int n2 = str2.size();
-    vector<vector<int>> dp(n1+1, vector<int>(n2+1, 0));
-
-    for(int i=0; i<=n1; i++) dp[i][0] = 0;
-    for(int j=0; j<=n2; j++) dp[0][j] = 0;
-
-    for(int i=1; i<=n1; i++)
+class Solution {
+  private:
+    // return length of LCS
+    int f(string &s1, string &s2, int n, int m)
     {
-        for(int j=1; j<=n2; j++)
+        vector<vector<int>> dp(n, vector<int>(m, 0));
+        
+        if(s1[0] == s2[0]) dp[0][0] = 1;
+        for(int j=1; j<m; j++)
         {
-            if(str1[i-1] == str2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
-
-            else dp[i][j] = 0 + max(dp[i-1][j], dp[i][j-1]);
+            if(s1[0] == s2[j]) dp[0][j] = 1;
+            else dp[0][j] = dp[0][j-1];
         }
+        for(int i=1; i<n; i++)
+        {
+            if(s2[0] == s1[i]) dp[i][0] = 1;
+            else dp[i][0] = dp[i-1][0];
+        }
+        
+        for(int i=1; i<n; i++)
+        {
+            for(int j=1; j<m; j++)
+            {
+                if(s1[i] == s2[j]) dp[i][j] = 1 + dp[i-1][j-1];
+                else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+        return dp[n-1][m-1];
     }
 
-    return dp[n1][n2];
-
-    // TC : n1*n2
-    // SC : O(n1*n2)
-}
-
-int main()
-{
-    string s1 = "abcd";
-    string s2 = "anc";
-    int n = s1.size();
-    int m = s2.size();
-
-    // idea : (n-LCS)+(m-LCS)
-
-    int LCS = f3(s1, s2);
-    cout << (n-LCS)+(m-LCS);
-
-}
+  public:
+    int minOperations(string &s1, string &s2) {
+        // Your code goes here
+        int n = s1.size();
+        int m = s2.size();
+        
+        int lcs = f(s1, s2, n, m);
+        
+        return (n - lcs) + (m - lcs);
+    }
+};

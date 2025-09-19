@@ -2,26 +2,52 @@
 using namespace std;
 
 // QUE : Buy and Sell Stocks III with at max k transctions
+// Link : https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
 
-// Recursion
-int f(vector<int> price, int ind ,int buy, int tr)
-{
-    if(ind == price.size()) return 0;
-    if(tr == 0) return 0;
+class Solution {
+private:
+    int f(int ind, vector<int>& prices, int n, int k, int tr, int hold)
+    {
+        if(ind == n || tr == k) return 0;
 
-    int profit = 0;
-    if(buy) profit = max(-price[ind] + f(price, ind+1, 0, tr), 0 + f(price, ind+1, 1, tr));
-    else profit = max(price[ind] + f(price, ind+1, 1, tr-1), 0 + f(price, ind+1, 0, tr));
+        int profit = 0;
+        if(hold == 0)
+        {
+            profit = max(-prices[ind] + f(ind+1, prices, n, k, tr, 1), f(ind+1, prices, n, k, tr, 0));
+        }
+        else
+        {
+            profit = max(prices[ind] + f(ind+1, prices, n, k, tr+1, 0), f(ind+1, prices, n, k, tr, 1));
+        }
+        return profit;
+    }
 
-    return profit;
-}
+    int f2(int ind, vector<int>& prices, int n, int k, int tr, int hold, vector<vector<vector<int>>> &dp)
+    {
+        if(ind == n || tr >= k) return 0;
 
-int main()
-{
-    vector<int> price = {3,3,5,0,0,3,1,4};
-    int n = price.size();
+        if(dp[ind][hold][tr] != -1) return dp[ind][hold][tr];
 
-    int k = 4;
+        int profit = 0;
+        if(hold == 0)
+        {
+            profit = max(-prices[ind] + f2(ind+1, prices, n, k, tr, 1, dp), f2(ind+1, prices, n, k, tr, 0, dp));
+        }
+        else
+        {
+            profit = max(prices[ind] + f2(ind+1, prices, n, k, tr+1,  0, dp), f2(ind+1, prices, n, k, tr, 1, dp));
+        }
+        return dp[ind][hold][tr] = profit;
+    }
 
-    cout << f(price, 0, 1, k);
-}
+public:
+    int maxProfit(int k, vector<int>& prices) {
+
+        int n = prices.size();
+
+        vector<vector<vector<int>>> dp(n, vector<vector<int>>(2, vector<int>(k+1, -1)));
+        return f2(0, prices, n, k, 0, 0, dp);
+
+        
+    }
+};

@@ -9,7 +9,7 @@ bool DetectCycleHelper(int node, int parent, vector<int> adj[], int &vis[])
     vis[node] = 1;
     for(auto adjecentNodes : adj[node])
     {
-        if(vis[adjecentNodes] == 0)
+        if(!vis[adjecentNodes])
         {
             if(DetectCycleHelper(adjecentNodes, node, adj, vis) == true) 
                 return true;

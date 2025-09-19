@@ -1,62 +1,74 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// Prims Algorithm to find minimum spanning tree
+// Greedy
+// "Prim's Algorithm is a greedy method to find the Minimum Spanning Tree. It starts with any node and always adds the edge with the smallest weight that connects a new node to the growing MST.
+// I use a min-heap (priority queue) to pick the minimum edge quickly, and I track visited nodes to avoid cycles.
+// The total cost is simply the sum of all the selected edge weights."
 
-void MinimumSpanningTree(int V, vector<vector<int>> adj[])
+// Visualization : https://upload.wikimedia.org/wikipedia/commons/9/9b/PrimAlgDemo.gif
+// Visualization2 : https://see-algorithms.com/graph/PrimsMST
+
+/*
+    Prim’s Algorithm (Using Min Heap)
+    ----------------------------
+    Time Complexity: O(E * logV)
+    where E = number of edges, V = number of vertices
+*/
+
+void primMST(int V, vector<vector<int>> adj[]) 
 {
-    // Data Structures
-    vector<int> vis(V, 0);
-    priority_queue<pair<pair<int, int>, int>, vector<pair<pair<int, int>, int>>, 
-    greater<pair<pair<int, int>, int>>> pq;
-    pq.push({{0,0},-1});  // {wt, node, parent} 
-    vector<pair<int, int>> MST;
-    int sum = 0;
+    // Min-heap to get edge with minimum weight: {weight, {current_node, parent_node}}
+    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, 
+                   greater<pair<int, pair<int, int>>>> pq;
 
-    // Applying Algorithm
-    while(!pq.empty())
+    vector<int> vis(V, 0);              // Track visited nodes
+    vector<pair<int, int>> mst_edges;       // Store MST edges
+    int total_cost = 0;                     // MST total weight
+
+    // Start from node 0, with weight 0 and no parent (-1)
+    pq.push({0, {0, -1}});
+
+    while (!pq.empty()) 
     {
-        int wt = pq.top().first.first;
-        int node = pq.top().first.second;
-        int parent = pq.top().second;
+        int node = pq.top().second.first;
+        int parent = pq.top().second.second;
+        int wt = pq.top().first;
         pq.pop();
 
-        if(vis[node] == 1) continue;
-        
+        // Skip if already included in MST
+        if (vis[node]) continue;
         vis[node] = 1;
 
-        for(auto it : adj[node])
-        {       
-            int adjNode = it[0];
-            int edge = it[1];
-            pq.push({{edge, adjNode}, node});
-
+        // If not the starting node, add edge to MST
+        if (parent != -1) 
+        {
+            mst_edges.push_back({parent, node});
+            total_cost += wt;
         }
 
-        if(parent == -1) continue;
-
-        MST.push_back({parent, node});
-        sum += wt;
+        // Traverse all adjacent nodes
+        for (auto it : adj[node]) 
+        {
+            int conn_node = it[0];
+            int edgeWt = it[1];
+            if (!vis[conn_node]) 
+            {
+                pq.push({edgeWt, {conn_node, node}});
+            }
+        }
     }
 
-    // Printing MST and its Sum
-    for(auto it : MST)
+    // Print the MST edges
+    cout << "Edges in the Minimum Spanning Tree:\n";
+    for (auto [u, v] : mst_edges) 
     {
-        cout << it.first << "---" << it.second << endl;
+        cout << u << " --- " << v << "\n";
     }
-    cout << "Sum is : " << sum;
+
+    // Print total weight
+    cout << "Total Weight of MST: " << total_cost << "\n";
 }
 
-int main()
-{
-    int V = 5;
 
-    vector<vector<int>> adj[V];
-    adj[0] = {{1,2},{2,1}};
-    adj[1] = {{0,2},{2,1}};
-    adj[2] = {{0,1},{1,1},{4,2},{3,2}};
-    adj[3] = {{2,2},{4,1}};
-    adj[4] = {{2,2},{3,1}};
 
-    MinimumSpanningTree(V, adj);
-}

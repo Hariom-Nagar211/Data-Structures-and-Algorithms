@@ -1,52 +1,65 @@
-#include<bits/stdc++.h>
-using namespace std;
 
-// QUE : https://bit.ly/3H10kYJ
+// Link : https://www.geeksforgeeks.org/problems/rod-cutting0840/1
 
-// Recursion
-int f(vector<int> length, vector<int> price, int ind, int len)
-{
-    if(ind == price.size()-1)
+class Solution {
+  private:
+    int f(int ind, int l, vector<int> &price, int n)
     {
-        if(len >= length[ind]) return (len/length[0])*price[ind];  
-        else return 0;      
+        if(l == 0) return 0;
+        if(ind == n) return 0;
+        
+        int not_take = f(ind+1, l, price, n);
+        int take = 0;
+        if(ind+1 <= l) take = price[ind] + f(ind+1, l-(ind+1), price, n);
+        
+        return max(not_take, take);
     }
-
-    int not_take = 0 + f(length, price, ind+1, len);
-    int take = INT_MIN;
-    if(len >= length[ind]) take = price[ind] + f(length, price, ind, len-length[ind]);
-
-    return max(take, not_take);
-
-}
-
-// Recursion + DP(Memoiztion)
-int f(vector<int> length, vector<int> price, int ind, int len, vector<vector<int>> &dp)
-{
-    if(ind == price.size()-1)
+    
+    int f2(int ind, int l, vector<int> &price, int n, vector<vector<int>> &dp)
     {
-        if(len >= length[ind]) return (len/length[0])*price[ind];  
-        else return 0;      
+        if(l == 0) return 0;
+        if(ind == n) return INT_MIN;
+        
+        if(dp[ind][l] != -1) return dp[ind][l];
+        
+        int not_take = f2(ind+1, l, price, n, dp);
+        int take = INT_MIN;
+        if(ind+1 <= l) take = price[ind] + f2(ind, l-(ind+1), price, n, dp);
+        
+        return dp[ind][l] = max(not_take, take);
     }
-
-    if(dp[ind][len] != -1) return dp[ind][len];
-
-    int not_take = 0 + f(length, price, ind+1, len);
-    int take = INT_MIN;
-    if(len >= length[ind]) take = price[ind] + f(length, price, ind, len-length[ind]);
-
-    return dp[ind][len] = max(take, not_take);
-
-}
-
-
-
-int main()
-{
-    vector<int> length = {1,2,3,4,5,6,7,8};
-    vector<int> price = {3,5,8,9,10,17,17,20};
-    int n = length.size();
-    int len = 8;
-
-    cout << f(length, price, n-1, len);
-}
+    
+    
+    int f3(int l, vector<int> &price, int n)
+    {
+        vector<vector<int>> dp(n, vector<int>(l+1, 0));
+        
+        for(int j=1; j<=l; j++) dp[0][j] = j*price[0];
+        
+        for(int ind=1; ind<n; ind++)
+        {
+            for(int len=1; len<=l; len++)
+            {
+                int not_take = dp[ind-1][len];
+                int take = INT_MIN;
+                if(ind+1 <= len) take = price[ind] + dp[ind][len-(ind+1)];
+                
+                dp[ind][len] = max(not_take, take);
+            }
+        }
+        return dp[n-1][l];
+    }
+    
+  public:
+    int cutRod(vector<int> &price) {
+        // code here
+        
+        int n = price.size();
+        
+        // vector<vector<int>> dp(n, vector<int>(n+1, -1));
+        // return f2(0, n, price, n, dp);
+        
+        return f3(n, price, n);
+        
+    }
+};

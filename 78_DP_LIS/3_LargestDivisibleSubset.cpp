@@ -2,63 +2,61 @@
 using namespace std;
 
 // QUE : Largest Divisible Subset
+// Link : https://leetcode.com/problems/largest-divisible-subset/
 
+class Solution {
+private:
+    vector<int> f(vector<int>& nums, int n)
+    {
+        vector<int> len(n, 1);
+        vector<int> hash(n);
+        for(int i=0; i<n; i++) hash[i] = i;
 
-// just a little change in LIS
-void f(vector<int> arr, int n)
-{
-    sort(arr.begin(), arr.end());
-    vector<int> dp(n,1);
-    vector<int> hash(n,1);
-    
-    for(int i=0; i<=n-1; i++){
-        
-        hash[i] = i; // initializing with current index
-        for(int prev_index = 0; prev_index <=i-1; prev_index ++){
-            
-            if(arr[i] % arr[prev_index] == 0 && 1 + dp[prev_index] > dp[i]){
-                dp[i] = 1 + dp[prev_index];
-                hash[i] = prev_index;
+        sort(nums.begin(), nums.end());
+
+        for(int ind=0; ind<n; ind++)
+        {
+            for(int prev_ind=0; prev_ind<ind; prev_ind++)
+            {
+                if(nums[ind]%nums[prev_ind] == 0)
+                {
+                    if(len[ind] < len[prev_ind]+1)
+                    {
+                        len[ind] = len[prev_ind]+1;
+                        hash[ind] = prev_ind;
+                    }
+                }
             }
         }
-    }
-    
-    int ans = -1;
-    int lastIndex =-1;
-    
-    for(int i=0; i<=n-1; i++){
-        if(dp[i]> ans){
-            ans = dp[i];
-            lastIndex = i;
+
+        int last_ind = -1;
+        int max_len = 0;
+        for(int i=0; i<n; i++)
+        {
+            if(len[i] > max_len)
+            {
+                max_len = len[i];
+                last_ind = i;
+            }
         }
-    }
-    
-    vector<int> temp;
-    temp.push_back(arr[lastIndex]);
-    
-    while(hash[lastIndex] != lastIndex){ // till not reach the initialization value
-        lastIndex = hash[lastIndex];
-        temp.push_back(arr[lastIndex]);    
-    }
-    
-    // reverse the array 
-    reverse(temp.begin(),temp.end());
-    
-    cout<<"The subsequence elements are ";
-    
-    for(int i=0; i<temp.size(); i++){
-        cout<<temp[i]<<" ";
-    }
-    cout<<endl;
-    
-    cout << ans;
-}
 
-int main()
-{
-    vector<int> arr = {1,16,7,8,4};  // 1,4,7,8,16
-    int n = arr.size();
+        vector<int> ans;
+        int prev_ind = last_ind;
+        while(hash[prev_ind] != prev_ind)
+        {
+            ans.push_back(nums[prev_ind]);
+            prev_ind = hash[prev_ind];
+        }
+        ans.push_back(nums[prev_ind]);
+        return ans;
+    }
 
-    f(arr, n);
-}
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
 
+        int n = nums.size();
+
+        return f(nums, n);
+        
+    }
+};

@@ -35,8 +35,8 @@ int MaxWidth(node* root)
             node* currNode = q.front().first;
             int currIndex = q.front().second - mini;
             q.pop();
-            if(currNode->left != NULL) q.push({currNode->left, currIndex*2+1});
-            if(currNode->right != NULL) q.push({currNode->right, currIndex*2+2});
+            if(currNode->left) q.push({currNode->left, currIndex*2+1});
+            if(currNode->right) q.push({currNode->right, currIndex*2+2});
 
             if(i == 0) fst = currIndex;
             if(i == size-1) lst = currIndex;

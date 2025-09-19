@@ -2,128 +2,54 @@
 using namespace std;
 
 // QUE : Longest Increasing Subsequence
+// Link : https://leetcode.com/problems/longest-increasing-subsequence/
 
-// Recursion
-int f(vector<int> arr, int ind, int prev_ind)
-{
-    int n = arr.size();
-    if(ind == n) return 0;
-
-    int len = 0 + f(arr, ind+1, prev_ind);
-    if(prev_ind == -1 || arr[prev_ind] < arr[ind]) len = max(1 + f(arr, ind+1, ind), len);
-
-    return len;
-        
-}
-
-// Recursion + DP(Memoization)
-int f2(vector<int> arr, int ind, int prev_ind, vector<vector<int>> dp)
-{
-    if(ind < 0) return 0;
-
-    if(dp[ind][prev_ind+1] != -1) return dp[ind][prev_ind+1];
-
-    int len = 0 + f2(arr, ind+1, prev_ind, dp);
-    if(prev_ind == -1 || arr[prev_ind] < arr[ind]) len = max(1 + f2(arr, ind+1, ind, dp), len);
-
-    return dp[ind][prev_ind+1] = len;
-}
-
-// Recursion + DP(Tabulation)
-int f3(vector<int> arr, int n)
-{
-    vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
-
-    for(int ind=n-1; ind>=0; ind--)
+class Solution {
+private:
+    int f(int ind, vector<int>& nums, int n, int prev_ind, int len)
     {
-        for(int prev_ind=ind-1; prev_ind>=-1; prev_ind--)
+        if(ind == n) return 0;
+
+        if(prev_ind != -1 && nums[ind] <= nums[prev_ind]) return f(ind+1, nums, n, prev_ind, len);
+        else
         {
-            int len = 0 + dp[ind+1][prev_ind+1];
-            if(prev_ind == -1 || arr[prev_ind] < arr[ind]) 
-                len = max(1 + dp[ind+1][ind+1], len);
+            int take = 1 + f(ind+1, nums, n, ind, len+1);
+            int not_take = 0 + f(ind+1, nums, n, prev_ind, len);
+
+            return max(take, not_take);
         }
     }
-    return dp[0][-1+1];
-}
 
-// unique solution to print LCS
-
-int f4(vector<int> arr, int n)
-{
-    vector<int> dp(n, 1);
-    int maxi = 1;
-    for(int i=0; i<n; i++)
+    int f2(int ind, vector<int>& nums, int n, int prev_ind, int len, vector<vector<int>> &dp)
     {
-        for(int prev=0; prev<i; prev++)
+        if(ind == n) return 0;
+
+        if(dp[ind][prev_ind] != -1) return dp[ind][prev_ind];
+
+        if(prev_ind != 0 && nums[ind] <= nums[prev_ind-1]) return f2(ind+1, nums, n, prev_ind, len, dp);
+        else
         {
-            if(arr[prev] < arr[i])
-                dp[i] = max(1 + dp[prev], dp[i]); 
-        }
-        maxi = max(maxi, dp[i]);
-    }
-    return maxi;
-    
-}
+            int take = 1 + f2(ind+1, nums, n, ind+1, len+1, dp);
+            int not_take = 0 + f2(ind+1, nums, n, prev_ind, len, dp);
 
-// printing the string
-void f5(vector<int> arr, int n)
-{
-    vector<int> dp(n,1);
-    vector<int> hash(n,1);
-    
-    for(int i=0; i<=n-1; i++){
+            return dp[ind][prev_ind] = max(take, not_take);
+        }
+    }
+
+    int f3(vector<int>& nums, int n)
+    {
+        vector<vector<int>> dp(n, vector<int>(n+1, 0));
+
         
-        hash[i] = i; // initializing with current index
-        for(int prev_index = 0; prev_index <=i-1; prev_index ++){
-            
-            if(arr[prev_index]<arr[i] && 1 + dp[prev_index] > dp[i]){
-                dp[i] = 1 + dp[prev_index];
-                hash[i] = prev_index;
-            }
-        }
     }
-    
-    int ans = -1;
-    int lastIndex =-1;
-    
-    for(int i=0; i<=n-1; i++){
-        if(dp[i]> ans){
-            ans = dp[i];
-            lastIndex = i;
-        }
+
+public:
+    int lengthOfLIS(vector<int>& nums) {
+
+        int n = nums.size();
+
+        vector<vector<int>> dp(n, vector<int>(n+1, -1));
+        return f2(0, nums, n, 0, 0, dp);
+        
     }
-    
-    vector<int> temp;
-    temp.push_back(arr[lastIndex]);
-    
-    while(hash[lastIndex] != lastIndex){ // till not reach the initialization value
-        lastIndex = hash[lastIndex];
-        temp.push_back(arr[lastIndex]);    
-    }
-    
-    // reverse the array 
-    reverse(temp.begin(),temp.end());
-    
-    cout<<"The subsequence elements are ";
-    
-    for(int i=0; i<temp.size(); i++){
-        cout<<temp[i]<<" ";
-    }
-    cout<<endl;
-    
-    return ans;
-}
-
-int main()
-{
-    vector<int> arr = {10,9,2,5,3,7,101,18};
-    int n = arr.size();
-
-    cout << f(arr, 0, -1) << endl;
-
-    vector<vector<int>> dp(n, vector<int>(n+1, -1));
-    cout << f2(arr, 0, -1, dp) << endl;
-
-    cout << f3(arr, n);
-
-}
+};

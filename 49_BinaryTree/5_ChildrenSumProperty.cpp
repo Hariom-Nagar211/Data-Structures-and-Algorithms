@@ -29,7 +29,7 @@ void ChildrenSumProperty(node* &root)
     }
     else
     {
-        root->data = root->left->data +root->right->data;
+        root->data = root->left->data + root->right->data;
     }   
 
     ChildrenSumProperty(root->left);

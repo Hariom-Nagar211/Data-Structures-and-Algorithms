@@ -27,7 +27,7 @@ int maxPath(node* root, int &maxSum)
 
     maxSum = max(maxSum, ls+rs+cs);
 
-    return ls + max(rs,cs);
+    return cs + max(ls, rs);
 
 }
 
@@ -50,3 +50,4 @@ int main()
 
     cout << Optimal(root);
 }
+

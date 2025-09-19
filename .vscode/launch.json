@@ -101,8 +101,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/DSA/72_DP_Grids",
-      "program": "d:/DSA/72_DP_Grids/build/Debug/outDebug",
+      "cwd": "d:/DSA/65_Graph_DijAlgo",
+      "program": "d:/DSA/65_Graph_DijAlgo/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

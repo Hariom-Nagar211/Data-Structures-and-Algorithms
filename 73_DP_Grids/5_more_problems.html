@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Programming Grid Problems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .difficulty-section {
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .difficulty-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .difficulty-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .difficulty-badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-right: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .easy {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .moderate {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .hard {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .problem-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .problem-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .problem-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .easy .problem-card {
+            border-left-color: #48bb78;
+        }
+
+        .moderate .problem-card {
+            border-left-color: #ed8936;
+        }
+
+        .hard .problem-card {
+            border-left-color: #e53e3e;
+        }
+
+        .problem-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .problem-number {
+            background: #f7fafc;
+            color: #667eea;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .problem-platform {
+            display: inline-block;
+            background: #f7fafc;
+            color: #4a5568;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .problem-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .problem-reason {
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .problem-reason strong {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .problem-reason span {
+            color: #666;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .problem-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .problem-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        .companies-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .companies-title {
+            font-size: 1.8rem;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .companies-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .company-tag {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: #4a5568;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .company-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .problem-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .difficulty-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dynamic Programming Grid Problems</h1>
+            <p class="subtitle">Essential problems for coding interviews and tech assessments</p>
+        </header>
+
+        <div class="difficulty-section easy">
+            <div class="difficulty-header">
+                <div class="difficulty-badge easy">Easy</div>
+                <span>Foundation problems to build core concepts</span>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">1</span>
+                        Unique Paths
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Find number of unique paths from top-left to bottom-right in a grid (only move right or down)
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Easy:</strong>
+                        <span>Basic 2D DP, simple recurrence relation: dp[i][j] = dp[i-1][j] + dp[i][j-1]</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/unique-paths/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">2</span>
+                        Minimum Path Sum
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Find a path from top left to bottom right, which minimizes the sum of all numbers along its path
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Easy:</strong>
+                        <span>Direct extension of unique paths with sum calculation</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/minimum-path-sum/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">3</span>
+                        Triangle
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Given a triangle array, return the minimum path sum from top to bottom
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Easy:</strong>
+                        <span>1D DP possible, clear adjacent movement rules</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/triangle/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section moderate">
+            <div class="difficulty-header">
+                <div class="difficulty-badge moderate">Moderate</div>
+                <span>Intermediate problems with added complexity</span>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">4</span>
+                        Unique Paths II
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Unique paths with obstacles in the grid
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Moderate:</strong>
+                        <span>Adds obstacle handling logic, requires careful boundary conditions</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/unique-paths-ii/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">5</span>
+                        Minimum Falling Path Sum
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Return the minimum sum of any falling path through matrix. A falling path starts at any element in the first row and chooses the element in the next row that is either directly below or diagonally left/right
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Moderate:</strong>
+                        <span>3 possible moves per step, requires handling edge cases for diagonal moves</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/minimum-falling-path-sum/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">6</span>
+                        Maximum Path Sum in Grid
+                    </h3>
+                    <div class="problem-platform">GeeksforGeeks</div>
+                    <p class="problem-description">
+                        Find maximum sum path from first row to last row (can move diagonally)
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Moderate:</strong>
+                        <span>Multiple starting points, diagonal movements increase complexity</span>
+                    </div>
+                    <a href="https://www.geeksforgeeks.org/maximum-path-sum-matrix/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="difficulty-section hard">
+            <div class="difficulty-header">
+                <div class="difficulty-badge hard">Hard</div>
+                <span>Advanced problems for senior positions</span>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">7</span>
+                        Shortest Path in Binary Matrix
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Find shortest path from top-left to bottom-right in binary matrix (8-directional movement)
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Hard:</strong>
+                        <span>BFS + DP combination, 8-directional movement, multiple edge cases</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">8</span>
+                        Cherry Pickup
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Two people moving through grid simultaneously to collect maximum cherries
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Hard:</strong>
+                        <span>3D DP (two paths simultaneously), complex state management</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/cherry-pickup/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+
+                <div class="problem-card">
+                    <h3 class="problem-title">
+                        <span class="problem-number">9</span>
+                        Shortest Path with Obstacles Elimination
+                    </h3>
+                    <div class="problem-platform">LeetCode</div>
+                    <p class="problem-description">
+                        Find shortest path while being able to eliminate k obstacles
+                    </p>
+                    <div class="problem-reason">
+                        <strong>Why Hard:</strong>
+                        <span>3D DP with state (x, y, obstacles_used), combines BFS with DP, complex optimization</span>
+                    </div>
+                    <a href="https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/" target="_blank" class="problem-link">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                        </svg>
+                        Solve Problem
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="companies-section">
+            <h2 class="companies-title">Frequently Asked In</h2>
+            <div class="companies-grid">
+                <div class="company-tag">Meta (Facebook)</div>
+                <div class="company-tag">Amazon</div>
+                <div class="company-tag">Netflix</div>
+                <div class="company-tag">Google</div>
+                <div class="company-tag">Microsoft</div>
+                <div class="company-tag">Apple</div>
+                <div class="company-tag">Stripe</div>
+                <div class="company-tag">Airbnb</div>
+                <div class="company-tag">Uber</div>
+                <div class="company-tag">Lyft</div>
+                <div class="company-tag">HackerRank</div>
+                <div class="company-tag">CodeSignal</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

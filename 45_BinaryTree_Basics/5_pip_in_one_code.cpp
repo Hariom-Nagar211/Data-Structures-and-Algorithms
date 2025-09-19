@@ -32,7 +32,7 @@ void pip(node* root)
         {
             preorder.push_back(st.top().first->data);
             st.top().second++;
-            if(st.top().first->left != NULL) 
+            if(st.top().first->left != nullptr) 
             {
                 st.push({st.top().first->left, 1});
             }

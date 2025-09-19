@@ -2,64 +2,52 @@
 using namespace std;
 
 // QUE : Array ---> Break in two Subsets ---> return minimum difference (Subset1 - Subset2).
+// Link : https://leetcode.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference/
 
-// Recursion
-int f(int ind, int sum, vector<int>& arr, int total) 
-{
-    if (ind == arr.size()) 
+class Solution {
+private:
+    int f(int ind, vector<int> &arr, int n, int s1Sum, int totalSum, int s1Length)
     {
-        return abs((total - sum) - sum);
-    }
-    
-    int not_take = f(ind + 1, sum, arr, total);
-    int take = f(ind + 1, sum + arr[ind], arr, total);
-    
-    return min(take, not_take);
-}
-
-// Tabulation
-int f3(vector<int> arr, int n)
-{
-    int total = 0;
-    for(int i=0; i<n; i++) total += arr[i];
-    int t = total;
-
-    vector<vector<bool>> dp(n, vector<bool>(t+1, false));
-
-    for(int i=0; i<n; i++) dp[i][0] = true;
-    if(arr[0] <= t) dp[0][arr[0]] = true;
-
-    for(int ind=1; ind<n; ind++)
-    {
-        for(int tar=1; tar<=t; tar++)
+        if(ind == n) 
         {
-            int not_take = dp[ind-1][tar];
-            int take = false;
-            if(tar >= arr[ind]) take = dp[ind-1][tar - arr[ind]];
-
-            dp[ind][tar] = not_take || take;
+            if(s1Length == n/2) return abs((totalSum-s1Sum) - s1Sum);
+            else return INT_MAX;
         }
+
+        int not_take = f(ind+1, arr, n, s1Sum, totalSum, s1Length);
+        int take = f(ind+1, arr, n, s1Sum+arr[ind], totalSum, s1Length+1);
+
+        return min(not_take, take);
     }
-    
-    int mini = 1e9;
-    for(int s1=0; s1<=total/2; s1++)
+
+    int f2(int ind, vector<int> &arr, int n, int s1Sum, int totalSum, int s1Length,
+           vector<vector<vector<int>>> &dp)
     {
-        if(dp[n-1][s1] == true)
+        if (s1Length > n/2) return 1e9; // prune
+        if (ind == n) 
         {
-            mini = min(mini, abs((total-s1)-s1));
+            if (s1Length == n/2) return abs((totalSum - s1Sum) - s1Sum);
+            return 1e9;
         }
+
+        int &cached = dp[ind][s1Length][s1Sum];
+        if (cached != -1) return cached;
+
+        int not_take = f2(ind+1, arr, n, s1Sum, totalSum, s1Length, dp);
+        int take = f2(ind+1, arr, n, s1Sum + arr[ind], totalSum, s1Length + 1, dp);
+
+        return cached = min(not_take, take);
     }
-    return mini;
 
-}
+public:
+    int minimumDifference(vector<int>& nums) {
+        int n = nums.size();
+        int totalSum = 0;
+        for (int x : nums) totalSum += x;
 
-int main()
-{
-    vector<int> arr = {3,6,2,1,7,8};
-    int n = arr.size();
-    int total = accumulate(arr.begin(), arr.end(), 0);
-    
-    cout << f(0, 0, arr, total) << endl;
-
-    cout << f3(arr, n);
-}
+        int maxK = n / 2;
+        // dp[ind][s1Length][s1Sum]
+        vector<vector<vector<int>>> dp(n, vector<vector<int>>(maxK + 1, vector<int>(totalSum + 1, -1)));
+        return f2(0, nums, n, 0, totalSum, 0, dp);
+    }
+};

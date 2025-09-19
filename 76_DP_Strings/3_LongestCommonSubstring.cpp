@@ -2,6 +2,7 @@
 using namespace std;
 
 // QUE : Longest Comman Substring
+// Link : https://leetcode.com/problems/maximum-length-of-repeated-subarray/description/
 
 int f(string str1, string str2)
 {
@@ -9,8 +10,6 @@ int f(string str1, string str2)
     int n2 = str2.size();
     vector<vector<int>> dp(n1+1, vector<int>(n2+1, 0));
 
-    for(int i=0; i<=n1; i++) dp[i][0] = 0;
-    for(int j=0; j<=n2; j++) dp[0][j] = 0;
     int ans = 0;
 
     for(int i=1; i<=n1; i++)

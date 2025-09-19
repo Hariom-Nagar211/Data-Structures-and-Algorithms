@@ -30,8 +30,10 @@ vector<vector<int>> levelOrder(node* root)
         {
             node* currentNode = q.front();
             q.pop();
-            if(currentNode->left != NULL) q.push(currentNode->left);
-            if(currentNode->right != NULL) q.push(currentNode->right);
+
+            if(currentNode->left) q.push(currentNode->left);
+            if(currentNode->right) q.push(currentNode->right);
+            
             level.push_back(currentNode->data);
         }
         ans.push_back(level);

@@ -2,22 +2,26 @@
 using namespace std;
 
 // QUE : Best Time to Buy and Sell Stocks
+// Link : https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 
-int main()
-{
-    vector<int> arr = {6,20,5,7,8,9};
-    int n = arr.size();
-    
-    if (n == 0) cout << 0 << endl;
-    
-    int mini = arr[0]; // store minimum buying price so far
-    int maxProfit = 0; 
-    for(int i=1; i<n; i++)
-    {
-        int profit = arr[i] - mini; // profit if selled in arr[i] 
-        maxProfit = max(profit, maxProfit); 
-        mini = min(arr[i], mini); // minimum buying price so far
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        
+        int n = prices.size();
+
+        int buying_price = prices[0];
+        int max_profit = 0;
+        for(int i=1; i<n; i++)
+        {
+            if(prices[i] > buying_price)
+            {
+                max_profit = max(max_profit, prices[i] - buying_price);
+            }
+            else buying_price = prices[i];
+        }
+        return max_profit;
+        
     }
-    cout << maxProfit << endl;
-}
+};
 

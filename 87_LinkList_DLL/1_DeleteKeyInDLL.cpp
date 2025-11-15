@@ -2,58 +2,55 @@
 using namespace std;
 
 // QUE : Delete all occurrences of a Key in DLL
+// Link : https://www.geeksforgeeks.org/problems/delete-all-occurrences-of-a-given-key-in-a-doubly-linked-list/1
 
-struct node
+
+// User function Template for C++
+
+/* a Node of the doubly linked list
+struct Node
 {
-    node* back;
-    int data;
-    node* next;
+  int data;
+  struct Node *next;
+  struct Node *prev;
+  Node(int x) { data = x; next = prev = NULL; }
+}; */
 
-    node(node* back1, int data1, node* next1)
-    {
-        back = back1;
-        data = data1;
-        next = next1;
-    }
-
-    node(int data1)
-    {
-        back = nullptr;
-        data = data1;
-        next = nullptr;
+class Solution {
+  public:
+    void deleteAllOccurOfX(struct Node** head_ref, int x) {
+        // Write your code here
+        
+        // deleting all occur at begning
+        Node* curr = *head_ref;
+        while(curr && curr->data == x)
+        {
+            Node* temp = curr;
+            curr = curr->next;
+            if(curr) curr->prev = nullptr;
+            delete(temp);
+        }
+        
+        // updating head
+        *head_ref = curr;
+        
+        // deleting the rest nodes
+        while(curr)
+        {
+            if(curr->data == x)
+            {
+                Node* temp = curr;
+                
+                Node* prev_node = curr->prev;
+                Node* next_node = curr->next;
+                if(prev_node) prev_node->next = next_node;
+                if(next_node) next_node->prev = prev_node;
+                
+                curr = curr->next;
+                delete(temp);
+            }
+            else curr = curr->next;
+        }
+        
     }
 };
-
-node* DeleteAllKeyOccurrences(node* head, int key) {
-    node* curr = head;
-    while (curr != nullptr) {
-        if (curr->data == key) {
-            // Key found, handle different cases
-            if (curr->back && curr->next) {
-                // Node has both previous and next
-                node* left = curr->back;
-                node* right = curr->next;
-                left->next = right;
-                right->back = left;
-                free(curr);
-                curr = left;
-            } else if (curr->back == nullptr && curr->next) {
-                // Node is the head
-                head = curr->next;
-                head->back = nullptr;
-                free(curr);
-                curr = head;
-                continue;
-            } else if (curr->back && curr->next == nullptr) {
-                // Node is the tail
-                node* temp = curr;
-                curr = curr->back;
-                curr->next = nullptr;
-                free(temp);
-            }
-        }
-        curr = curr->next;
-    }
-    if(head == Key) return nullptr;
-    return head;
-}

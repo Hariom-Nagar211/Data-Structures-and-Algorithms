@@ -1,39 +1,35 @@
-#include<iostream>
-#include<unordered_map>
-using namespace std;
 
-int f(string s = "AABABBA", int n = 7, int k = 2)
-{
-    int maxLen = 0;
-    int maxFreq = 0;
-    unordered_map<char, int> mpp;
-    int i = 0;
-    int j = 0;
+// link : https://leetcode.com/problems/longest-repeating-character-replacement/
 
-    // Transformations = Total - maxFreq
-    while(j < n)
-    {
-        mpp[s[j]]++;
-        maxFreq = max(maxFreq, mpp[s[j]]);
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
 
-        while(j-i+1 - maxFreq > k)
+        int n = s.size();
+
+        map<char, int> mpp;
+        int maxFreq = 0;
+        int maxLen = 0;
+
+        int l = 0;
+        int r = 0;
+        while(r < n)
         {
-            mpp[s[i]]--; 
+            mpp[s[r]]++;
+            maxFreq = max(maxFreq, mpp[s[r]]);
 
-            maxFreq = 0;
-            for(int i=0; i<26; i++) maxFreq = max(maxFreq, mpp[i]);
-            
-            i++;
+            while(r-l+1 - maxFreq > k)
+            {
+                mpp[s[l]]--; 
+                l++;
+            }
+
+            if(r-l+1 - maxFreq <= k) maxLen = max(maxLen, r-l+1);
+
+            r++;
         }
-
-        if(j-i+1 - maxFreq <= k) maxLen = max(maxLen, j-i+1);
-
-        j++;
+        return maxLen;
+            
+        
     }
-    return maxLen;
-}
-
-int main()
-{
-    cout << f() << endl;
-}
+};

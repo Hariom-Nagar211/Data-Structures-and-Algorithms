@@ -2,6 +2,7 @@
 using namespace std;
 
 // QUE : Remove Nth Node from the end of the LinkedList
+// Link : https://leetcode.com/problems/remove-nth-node-from-end-of-list/
 
 struct node
 {

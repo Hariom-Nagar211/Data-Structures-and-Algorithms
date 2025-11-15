@@ -2,50 +2,54 @@
 using namespace std;
 
 // QUE : Find all Pairs with given Sum in sorted DLL
-// Link:  https://tinyurl.com/y4xca7e5
+// Link:  https://www.geeksforgeeks.org/problems/find-pairs-with-given-sum-in-doubly-linked-list/1
 
-struct node
+// User function Template for C++
+
+/* Doubly linked list node class
+class Node
 {
-    node* back;
+public:
     int data;
-    node* next;
-
-    node(node* back1, int data1, node* next1)
+    Node *next, *prev;
+    Node(int val) : data(val), next(NULL), prev(NULL)
     {
-        back = back1;
-        data = data1;
-        next = next1;
-    }
-
-    node(int data1)
-    {
-        back = nullptr;
-        data = data1;
-        next = nullptr;
     }
 };
+*/
 
-vector<pair<int, int>> findPairs(node* head, int k)
-{
-    vector<pair<int, int>> pairs;
-
-    // i points first element and j points last element of DLL
-    node* i = head;
-    node* j = head;
-    while(j->next != nullptr) j = j->next;
-
-    // Two Pointers apporoach
-    while(i < j)
-    {
-        if((i->data) + (j->data) == k) 
+class Solution {
+  public:
+    vector<pair<int, int>> findPairsWithGivenSum(Node *head, int target) {
+        // code here
+        
+        Node* first = head;
+        Node* last = head;
+        while(last->next) last = last->next;
+        
+        vector<pair<int, int>> pairs;
+        while(first != last)
         {
-            pairs.push_back({i->data, j->data});
-            i = i->next;
-            j = j->back;
+            int val = first->data + last->data;
+            
+            if(val == target)
+            {
+                pairs.push_back({first->data, last->data});
+                
+                if(first->next == last) break;
+                
+                first = first->next;
+                last = last->prev;
+                
+                
+            }
+            else if(val > target)
+            {
+                last = last->prev;
+            }
+            else first = first->next;
         }
-        else if((i->data) + (j->data) < k) i = i->next;
-        else j = j->back;
+        return pairs;
+        
     }
-
-    return pairs;
-}
+};

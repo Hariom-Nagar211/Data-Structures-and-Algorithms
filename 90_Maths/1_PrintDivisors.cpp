@@ -2,6 +2,7 @@
 using namespace std;
 
 // QUE : Print all Divisors of a Number
+// Link : https://www.geeksforgeeks.org/problems/all-divisors-of-a-number/1
 
 void PrintDivisors(int n)
 {

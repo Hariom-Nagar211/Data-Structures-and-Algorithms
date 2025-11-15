@@ -2,38 +2,32 @@
 using namespace std;
 
 // QUE : Maximum Points You Can Obtain from k Cards consucatively from front, back or both.
+// Link : https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/submissions/1824780154/
 
-int f(vector<int> cards, int n, int k)
-{
-    int maxPoints = 0;
-    for(int i=0; i<k; i++) maxPoints += cards[i];
+class Solution {
+public:
+    int maxScore(vector<int>& cardPoints, int k) {
 
-    // k possible combinations, picking all points before i and after j
-    int i = k-1; // k-1 cards left
-    int j = n-2; // 1 card left
-    int points = maxPoints;
-    while(i >= 0)
-    {
-        points = points - cards[i] + cards[j+1];
-        maxPoints = max(maxPoints, points);
+        int n = cardPoints.size();
+        int lsum = 0;
+        int rsum = 0;
+        int maxSum = 0;
 
-        i--;
-        j--;
+        for(int i=0; i<k; i++) lsum += cardPoints[i];
+
+        maxSum = lsum;
+
+        int t = 1;
+        for(int i=n-1; i>= n-k; i--)
+        {
+            lsum = lsum - cardPoints[k - t];
+            t++;
+
+            rsum += cardPoints[i];
+
+            maxSum = max(maxSum, lsum+rsum);
+        }
+        return maxSum;
+        
     }
-
-    return maxPoints;
-
-    // LC : Trying all possible cases
-    // TC : O(2k)
-    // SC : 1
-    
-}
-
-int main()
-{
-    vector<int> cards = {6,2,3,4,7,2,1,7,1};
-    int n = cards.size();
-    int k = 4;
-
-    cout << f(cards, n, k) << endl;
-}
+};

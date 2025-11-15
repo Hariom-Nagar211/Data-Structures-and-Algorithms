@@ -2,36 +2,59 @@
 using namespace std;
 
 // Que : Pickup maximum fruits into the two baskets
+// Link : https://leetcode.com/problems/fruit-into-baskets/
 
-int f(vector<int> trees, int n)
-{
-    int i = 0;
-    int j = 1;
-    int maxFruits = 0;
-    int varity = 1;
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
 
-    while(j < n)
-    {
-        if(trees[j] != trees[j-1]) varity++;
+        int n = fruits.size();
 
-        while(varity > 2)
+        if(n <= 2) return n;
+
+        pair<int, int> b1 = {-1, 0}; // fruit_type, fruit_count
+        pair<int, int> b2 = {-1, 0};
+
+        int i = 0;
+        int j = 0;
+        int maxCount = 0;
+        while(j < n)
         {
-            if(trees[i] != trees[i+1]) varity--;
-            i++;
+            if(fruits[j] == b1.first) b1.second++;
+            else if(fruits[j] == b2.first) b2.second++;
+            else
+            {
+                if(b1.first == -1) b1 = {fruits[j], 1};
+                else if(b2.first == -1) b2= {fruits[j], 1};
+                else 
+                {
+                    while(b1.second != 0 && b2.second != 0)
+                    {
+                        if(fruits[i] == b1.first) b1.second--;
+                        else b2.second--;
+
+                        i++;
+                    }
+
+                    if(b1.second == 0)
+                    {
+                        b1.first = fruits[j];
+                        b1.second++;
+                    }
+                    else
+                    {
+                        b2.first = fruits[j];
+                        b2.second++;
+                    }
+                }
+                
+            }
+
+            maxCount = max(maxCount, b1.second+b2.second);
+            j++;
         }
-
-        maxFruits = max(maxFruits, j-i+1);
-
-        j++;
+        return maxCount;
+        
+        
     }
-
-    cout << maxFruits << endl;
-}
-
-int main()
-{
-    vector<int> trees = {3,3,3,1,2,1,1,2,3,3,4};
-    int n = trees.size();
-
-    f(trees, n);
-}
+};

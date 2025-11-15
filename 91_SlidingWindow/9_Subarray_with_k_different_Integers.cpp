@@ -2,6 +2,7 @@
 using namespace std;
 
 // Que: Given an array of integers, find the number of subarrays with exactly k different integers.
+// Link : https://leetcode.com/problems/subarrays-with-k-different-integers/
 
 // LC: Sliding Window
 // TC: O(n)

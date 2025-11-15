@@ -2,62 +2,50 @@
 using namespace std;
 
 // QUE : Remove duplicates from sorted DLL
-// Link: https://tinyurl.com/5n8ndcuu
+// Link: https://www.geeksforgeeks.org/problems/remove-duplicates-from-a-sorted-doubly-linked-list/1
 
-struct node
+/*
+struct Node
 {
-    node* back;
     int data;
-    node* next;
-
-    node(node* back1, int data1, node* next1)
+    Node * next;
+    Node * prev;
+    Node (int x)
     {
-        back = back1;
-        data = data1;
-        next = next1;
+        data=x;
+        next=NULL;
+        prev=NULL;
     }
 
-    node(int data1)
-    {
-        back = nullptr;
-        data = data1;
-        next = nullptr;
+};
+*/
+
+class Solution {
+  public:
+
+    Node *removeDuplicates(struct Node *head) {
+        // Your code here
+        
+        if (!head) return nullptr;
+
+        Node* curr = head;
+
+        while (curr && curr->next) {
+            if (curr->data == curr->next->data) {
+                // Duplicate node is curr->next
+                Node* duplicate = curr->next;
+                Node* next_node = duplicate->next;
+
+                curr->next = next_node;
+                if (next_node) next_node->prev = curr;
+
+                delete duplicate; // free memory
+            } else {
+                curr = curr->next; // move forward if no duplicate
+            }
+        }
+
+        return head;
+        
     }
 };
-
-node* removeDuplicates(node* head)
-{
-    if(head == nullptr) return nullptr;
-
-    node* prev = head;
-    node* curr = head->next;
-    
-    while(curr != nullptr)
-    {
-        int key = prev->data;
-
-        if(curr->data == key)
-        {
-            if(curr->next)
-            {
-                node* temp = curr;
-                prev->next = curr->next;
-                curr = curr->next;
-                curr->back = prev;
-                free(temp);
-            }
-            else
-            {
-                prev->next = nullptr;
-                free(curr);
-            }
-        }
-        else
-        {
-            prev = curr;
-            curr = curr->next;
-        }
-    }
-    return head;
-
-}

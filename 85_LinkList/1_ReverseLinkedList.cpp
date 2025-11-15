@@ -2,7 +2,7 @@
 using namespace std;
 
 // QUE : Reverse a LinkList
-// not working don't know why
+// Link : https://leetcode.com/problems/reverse-linked-list/
 
 struct node
 {
@@ -81,14 +81,33 @@ node* ReverseLL2(node* &back, node* &mid, node* &front)
 
 }
 
-int main()
-{
-    node* head = createLL(6);
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
 
-    head = ReverseLL(head);
-    printLL(head);
+        if(!head || !head->next) return head;
 
-    // head = ReverseLL2(head, head->next, head->next->next);
-    // printLL(head);
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        while(curr)
+        {
+            ListNode* next_node = curr->next;
 
-}
+            curr->next = prev;
+
+            prev = curr;
+            curr = next_node;
+        }
+        return prev;
+    }
+};

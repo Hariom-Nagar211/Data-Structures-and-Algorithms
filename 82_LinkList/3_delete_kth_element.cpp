@@ -1,6 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+Link : https://leetcode.com/problems/remove-linked-list-elements/
+
+// new = building a house with special foundation.
+// delete = calls the “demolish crew” that knows how to tear it down safely.
+// malloc = building a tent.
+// free = just rolls up the tent.
+
 struct node
 {
     int data;
@@ -19,29 +26,6 @@ struct node
 
     }
 };
-
-void printLL(node* head)
-{
-    while(head != NULL)
-    {
-        cout << head->data << " ";
-        head = head->next;
-    }
-}
-
-node* convertArr2LL(vector<int> arr)
-{
-    node* head = new node(arr[0]);
-    node* mover = head;
-
-    for(int i=1; i<arr.size(); i++)
-    {
-        node* temp = new node(arr[i]);
-        mover->next = temp;
-        mover = temp;
-    }
-    return head;
-}
 
 node* delete_kth(node* head, int k)
 {

@@ -1,85 +1,68 @@
-#include<bits/stdc++.h>
-using namespace std;
 
-// QUE : Matrix Chain Multiplication
+// Link : https://www.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1
 
-// Recursion
-int f(vector<int> arr, int i, int j)
-{
-    if(i == j) return 0;
-
-    int mini = 1e9;
-    for(int k=i; k<=j-1; k++)
+class Solution {
+  private:
+    int f(int i, int j, vector<int> &arr)
     {
-        int steps = (arr[i-1]*arr[k]*arr[j]) + f(arr, i, k) + f(arr, k+1, j);
-        mini = min(mini, steps);
-    }
-
-    return mini;
-
-    // TC : exp
-    // SC : N
-}
-
-// Recursion + DP(Memoization)
-int f2(vector<int> arr, int i, int j, vector<vector<int>> dp)
-{
-    if(i == j) return 0;
-
-    if(dp[i][j] != -1) return dp[i][j];
-
-    int mini = 1e9;
-    for(int k=i; k<=j-1; k++)
-    {
-        int steps = (arr[i-1]*arr[k]*arr[j]) + f2(arr, i, k, dp) + f2(arr, k+1, j, dp);
-        mini = min(mini, steps);
-    }
-
-    return dp[i][j] = mini;
-
-    // TC : n*n*n
-    // SC : n*n + n
-}
-
-// Recursion + DP(Tabulation)
-int f3(vector<int> arr, int n)
-{
-    vector<vector<int>> dp(n, vector<int>(n, 0));
-
-    for(int i=1; i<n; i++) dp[i][i] = 0;
-    
-    for(int i=n-1; i>=1; i--)
-    {
-        for(int j=i+1; j<=n-1; j++)
+        if(i+1 == j) return 0;
+        
+        int mini = 1e9;
+        for(int k=i+1; k<j; k++)
         {
-            int mini = 1e9;
-            for(int k=i; k<j; k++)
-            {
-                int steps = (arr[i-1]*arr[k]*arr[j]) + dp[i][k] + dp[k+1][j];
-                mini = min(mini, steps);
-            }
-            dp[i][j] = mini;
+            int val = (arr[i]*arr[k]*arr[j]) + f(i, k, arr) + f(k, j, arr);
+            mini = min(mini, val);
         }
+        return mini;
     }
-
-    return dp[1][n-1];
-
-    // TC : n*n*n
-    // SC : n*n
-}
-
-
-int main()
-{
-    vector<int> arr = {1,2,3,4,5};
-    int n = arr.size();
-
-    cout << f(arr, 1, n-1) << endl;
-
-    vector<vector<int>> dp(n, vector<int>(n, -1));
-    cout << f2(arr, 1, n-1, dp) << endl;
-
-    cout << f3(arr, n) << endl;
-
-
-}
+    
+    int f2(int i, int j, vector<int> &arr, vector<vector<int>> &dp)
+    {
+        if(i+1 == j) return 0;
+        
+        if(dp[i][j] != -1) return dp[i][j];
+        
+        int mini = 1e9;
+        for(int k=i+1; k<j; k++)
+        {
+            int val = (arr[i]*arr[k]*arr[j]) + f2(i, k, arr, dp) + f2(k, j, arr, dp);
+            mini = min(mini, val);
+        }
+        return dp[i][j] = mini;
+    }
+    
+    int f3(vector<int> &arr, int n)
+    {
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        
+        for(int i=n-1; i>=0; i--)
+        {
+            for(int j=i+2; j<=n-1; j++)
+            {
+                int mini = 1e9;
+                for(int k=i+1; k<j; k++)
+                {
+                    int val = (arr[i]*arr[k]*arr[j]) + dp[i][k] + dp[k][j];
+                    mini = min(mini, val);
+                }
+                dp[i][j] = mini;
+            }
+        }
+        return dp[0][n-1];
+    }
+    
+    
+    
+  public:
+    int matrixMultiplication(vector<int> &arr) {
+        // code here
+        int n = arr.size();
+        // vector<vector<int>> dp(n, vector<int>(n, -1));
+        // return f2(0, arr.size()-1, arr, dp);
+        
+        return f3(arr, n);
+        
+        
+        
+    }
+};

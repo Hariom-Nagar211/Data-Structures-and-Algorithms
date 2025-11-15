@@ -3,7 +3,6 @@ using namespace std;
 
 // QUE : Partition Array for Maximum Sum
 
-
 #include <bits/stdc++.h>
 using namespace std;
 

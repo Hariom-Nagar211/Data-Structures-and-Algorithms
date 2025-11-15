@@ -1,6 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+// Link : https://leetcode.com/problems/max-consecutive-ones/submissions/1825704231/
+
 void f(vector<int> arr, int n, int k)
 {
     int i = 0;

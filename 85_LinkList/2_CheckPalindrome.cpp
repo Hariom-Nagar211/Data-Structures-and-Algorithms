@@ -2,6 +2,8 @@
 using namespace std;
 
 // QUE : CheckPalindrome
+// Note : Important que whatch striver video complete
+// Link : https://leetcode.com/problems/palindrome-linked-list/
 
 struct node
 {

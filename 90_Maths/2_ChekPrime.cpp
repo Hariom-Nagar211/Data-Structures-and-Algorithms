@@ -1,20 +1,30 @@
-#include<bits/stdc++.h>
-using namespace std;
 
-// QUE : Check if a Number if Prime or not
+// Link : https://leetcode.com/problems/count-primes/
 
-bool checkPrime(int n)
-{
-    for(int i=2; i<=sqrt(n); i++)
-    {
-        if(n % i == 0) return false;
+class Solution {
+public:
+    int countPrimes(int n) {
+        if(n <= 2) return 0;
+        
+        vector<bool> isPrime(n, true);
+        isPrime[0] = isPrime[1] = false;
+        
+        // Sieve of Eratosthenes
+        for(int i = 2; i * i < n; i++) {
+            if(isPrime[i]) {
+                // Mark all multiples of i as non-prime
+                for(int j = i * i; j < n; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+        
+        // Count primes
+        int count = 0;
+        for(int i = 2; i < n; i++) {
+            if(isPrime[i]) count++;
+        }
+        
+        return count;
     }
-    return true;
-}
-
-int main()
-{
-    int n = 2763237;
-
-    cout << checkPrime(n);
-}
+};

@@ -1,127 +1,45 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// QUE : Odd Even Linked List
+// QUE : https://leetcode.com/problems/odd-even-linked-list/
 
-struct node
-{
-    int data;
-    node* next;
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
 
-    node(int data1, node* next1)
-    {
-        data = data1;
-        next = next1;
-    }
+        if(head == nullptr || head->next == nullptr) return head;
 
-    node(int data1)
-    {
-        data = data1;
-        next = nullptr;
+        ListNode* even_head = head->next;
+
+        ListNode* odd_node = head;
+        ListNode* even_node = head->next;
+        while(odd_node && even_node)
+        {
+            if(odd_node->next) odd_node->next = odd_node->next->next;
+            if(even_node->next) even_node->next = even_node->next->next;
+
+            odd_node = odd_node->next;
+            even_node = even_node->next;
+        }
+        
+        ListNode* odd_tail = head;
+        while(odd_tail->next != nullptr) odd_tail = odd_tail->next;
+
+        odd_tail->next = even_head;
+
+        return head;
+
+        
     }
 };
 
-node* createLL(int n)
-{
-    int val;
-    cout << "Enter Linklist : ";
-    cin >> val;
-    node* head = new node(val);
-    node* mover = head;
-    
-    for(int i=1; i<n; i++)
-    {
-        int val;
-        cin >> val;
-        node* temp = new node(val);
-        mover->next = temp;
-        mover = temp;
-    }
-    return head;
-}
-
-void printLL(node* head)
-{
-    node* temp = head;
-    while(temp != nullptr)
-    {
-        cout << temp->data << " ";
-        temp = temp->next;
-    }
-    cout << endl;
-}
-
-node* OddEvenLL(node* head)
-{
-    if(head == nullptr || (head->next == nullptr || head->next->next == nullptr)) return head;
-
-    vector<int> arr;
-
-    node* temp = head;
-    while(temp != nullptr)
-    {
-        arr.push_back(temp->data);
-        if(temp->next == nullptr) break;
-        temp = temp->next->next;
-    }
-
-    temp = head->next;
-    while(temp != nullptr)
-    {
-        arr.push_back(temp->data);
-        if(temp->next == nullptr) break;
-        temp = temp->next->next;
-    }
-
-    temp = head;
-    int i = 0;
-    while(temp != nullptr)
-    {
-        temp->data = arr[i];
-        temp = temp->next;
-        i++;
-    }
-    
-    return head;
-
-    // TC : N
-    // SC : N
-}
-
-node* OddEvenLL2(node* head)
-{
-    if (head == nullptr || head->next == nullptr) return head;
-
-    // Initialize pointers for odd and even nodes
-    node* odd = head;
-    node* even = head->next;
-    node* evenHead = even; // Keep track of the start of even nodes
-
-    while (even != nullptr && even->next != nullptr) 
-    {
-        // Connect odd nodes
-        odd->next = even->next;
-        odd = odd->next;
-
-        // Connect even nodes
-        even->next = odd->next;
-        even = even->next;
-    }
-
-    // Attach even nodes after the last odd node
-    odd->next = evenHead;
-
-    return head;
-
-    // TC : N
-    // SC : 1
-}
-
-int main()
-{
-    node* head = createLL(3);
-
-    head = OddEvenLL2(head);
-    printLL(head);
-
-}

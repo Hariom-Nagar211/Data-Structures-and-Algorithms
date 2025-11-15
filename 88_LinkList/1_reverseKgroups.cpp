@@ -1,81 +1,59 @@
-#include<bits/stdc++.h>
-using namespace std;
 
-// QUE : Reverse Nodes in K Group Size of LinkedList
-// Link: https://tinyurl.com/4dbz8fnn
+// Link : https://leetcode.com/problems/reverse-nodes-in-k-group/
 
-struct node
-{
-    int data;
-    node* next;
 
-    node(int data1, node* next1)
-    {
-        data = data1;
-        next = next1;
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+private:
+    // Reverse exactly k nodes starting from 'head'
+    // Returns {new_head_of_block, new_tail_of_block, pointer_to_next_segment}
+    std::tuple<ListNode*, ListNode*, ListNode*> reverseBlock(ListNode* head, int k) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        for (int i = 0; i < k; ++i) {
+            ListNode* nxt = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nxt;
+        }
+        // prev = new head of this block
+        // head = new tail (old head)
+        // curr = pointer to next segment after this block
+        return {prev, head, curr};
     }
 
-    node(int data1)
-    {
-        data = data1;
-        next = nullptr;
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || k <= 1) return head;
+
+        // First, count length
+        int n = 0;
+        for (ListNode* tmp = head; tmp; tmp = tmp->next) n++;
+        if (n < k) return head;
+
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode* prevTail = &dummy;
+        ListNode* curr = head;
+
+        while (n >= k) {
+            auto [blockHead, blockTail, nextStart] = reverseBlock(curr, k);
+            prevTail->next = blockHead;
+            blockTail->next = nextStart;
+
+            prevTail = blockTail;
+            curr = nextStart;
+            n -= k;
+        }
+        return dummy.next;
     }
 };
-
-node* reverseLL(node* head)
-{
-    node* left = nullptr;
-    node* curr = head;
-    while(curr != nullptr)
-    {
-        node* temp = curr->next;
-        curr->next = left;
-        left = curr;
-        curr = temp;
-    }
-    return left;
-}
-
-node* findkthNode(node* temp, int k)
-{
-    k -= 1;
-    while(temp != nullptr && k > 0)
-    {
-        k--;
-        temp = temp->next;
-    }
-    return temp;
-}
-
-node* kReverse(node* head, int k) 
-{
-    node* temp = head;
-    node* nextNode = nullptr;
-    node* prevNode = temp;
-    while(temp != nullptr)
-    {
-        node* kthNode = findkthNode(temp, k);
-        if(kthNode == nullptr)
-        {
-            if(prevNode) prevNode->next = temp;
-            break;
-        }
-
-        nextNode = kthNode->next;
-        kthNode->next = nullptr;
-
-        reverseLL(temp);
-
-        if(temp == head)
-        {
-            head = kthNode;
-        }
-        else
-        {
-            prevNode->next = kthNode;
-        }
-        prevNode = temp;
-        temp = nextNode;
-    }
-    return head;
-}

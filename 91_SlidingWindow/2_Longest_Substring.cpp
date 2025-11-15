@@ -2,70 +2,29 @@
 using namespace std;
 
 // QUE : Longest Substring Without Repeating Characters.
+// Link : https://leetcode.com/problems/longest-substring-without-repeating-characters/
 
-// Brute 
-int f(string s, int n)
-{
-    int maxLen = 0;
-    for(int i=0; i<n; i++)
-    {
-        string sub = "";
-        unordered_map<char,int> mpp;
-        for(int j=i; j<n; j++)
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+
+        unordered_map<int, int> mpp; // element , index
+        int n = s.size();
+        int maxLen = 0;
+
+        int i = 0;
+        int j = 0;
+        while(j < n)
         {
-            if(mpp[s[j]] >= 1)
+            if(mpp.find(s[j]) != mpp.end())
             {
-                maxLen = max(maxLen, (int)sub.size());
-                break;
+                if(mpp[s[j]] >= i) i = mpp[s[j]] + 1;
             }
-            else
-            {
-                mpp[s[j]]++;
-                sub += s[j];
-            }
+            maxLen = max(maxLen, j-i+1);
+            mpp[s[j]] = j;
+            j++;
         }
-    }
-    return maxLen;
-
-    // LC : Generating all Substrings + Frequency Map
-    // TC : N*N
-    // SC : 256
-}
-
-// Using Sliding Window
-int f2(string s, int n)
-{
-    int maxLen = 0;
-    unordered_map<char,int> mpp;
-    int i = 0;
-    int j = 0;
-
-    while(j < n)
-    {
-        mpp[s[j]]++;
-
-        while(mpp[s[j]] > 1)
-        {
-            mpp[s[i]]--;
-            i++;
-        }
-
-        maxLen = max(maxLen, j - i + 1);
+        return maxLen;
         
-        j++;
     }
-    return maxLen;
-
-    // LC : Sliding Window + Freq Map
-    // TC : 2*N
-    // SC : 256
-}
-
-int main()
-{
-    string s = "cadbzabcd";
-    int n = s.size();
-
-    cout << f(s, n) << endl;
-    cout << f2(s, n) << endl;
-}
+};
